@@ -4,7 +4,7 @@ class Category {
   //创建新实例时id可以为null
   int? id;
   String name;
-  //name不可空,所以必须加required
+  //name不可空,所以必须加required..
   Category({this.id, required this.name});
 
   //前面说明了该方法的返回值是Map<String, dynamic>,键是String类型,值是dynamic类型
