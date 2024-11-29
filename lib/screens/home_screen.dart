@@ -111,71 +111,77 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('分类相册'),
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-        ),
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CategoryScreen(category: categories[index]),
-                ),
-              ).then((_) => _loadCategories());
-            },
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (categories[index].latestPhoto != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
-                      File(categories[index].latestPhoto!.path),
-                      fit: BoxFit.cover,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+          ),
+          itemCount: categories.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CategoryScreen(category: categories[index]),
                     ),
-                  )
-                else
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Center(
-                      child: Text(
-                        categories[index].name[0].toUpperCase(),
-                        style: TextStyle(fontSize: 40, color: Colors.white),
+                  ).then((_) => _loadCategories());
+                },
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (categories[index].latestPhoto != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(
+                          File(categories[index].latestPhoto!.path),
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    else
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            categories[index].name[0].toUpperCase(),
+                            style: TextStyle(fontSize: 40, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          categories[index].name,
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
                       ),
                     ),
-                  ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black54,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Text(
-                      categories[index].name,
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.white),
+                        onPressed: () => _deleteCategory(categories[index]),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                Positioned(
-                  top: 5,
-                  right: 5,
-                  child: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.white),
-                    onPressed: () => _deleteCategory(categories[index]),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
