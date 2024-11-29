@@ -1,3 +1,5 @@
+import 'package:category_album/models/photo.dart';
+
 /// 这个文件定义了`Category`
 /// `Category`是一个数据模型类，用于表示一个分类
 class Category {
@@ -5,6 +7,7 @@ class Category {
   int? id;
   String name;
   //name不可空,所以必须加required..
+  Photo? latestPhoto;
   Category({this.id, required this.name});
 
   //前面说明了该方法的返回值是Map<String, dynamic>,键是String类型,值是dynamic类型
