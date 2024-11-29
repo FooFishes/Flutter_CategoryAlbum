@@ -4,6 +4,8 @@ import 'package:category_album/screens/category_screen.dart';
 import 'package:category_album/services/database_helper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:category_album/screens/photo_classification_screen.dart';
+import 'package:category_album/models/photo.dart';
+import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,6 +24,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadCategories() async {
     final loadedCategories = await DatabaseHelper.instance.getCategories();
+    for (var category in loadedCategories) {
+      final photos = await DatabaseHelper.instance.getPhotosByCategory(category.id!);
+      if (photos.isNotEmpty) {
+        category.latestPhoto = photos.last;
+      }
+    }
     setState(() {
       categories = loadedCategories;
     });
@@ -123,17 +131,32 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Container(
-                  color: Colors.grey[300],
-                  child: Center(
-                    child: Text(
-                      categories[index].name[0].toUpperCase(),
-                      style: TextStyle(fontSize: 40, color: Colors.white),
+                if (categories[index].latestPhoto != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(categories[index].latestPhoto!.path),
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                else
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        categories[index].name[0].toUpperCase(),
+                        style: TextStyle(fontSize: 40, color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
                 Container(
-                  color: Colors.black54,
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   child: Center(
                     child: Text(
                       categories[index].name,
