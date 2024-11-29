@@ -1,5 +1,3 @@
-//主屏幕页面AI帮了大大大大忙了((((((((
-
 import 'package:flutter/material.dart';
 import 'package:category_album/models/category.dart';
 import 'package:category_album/screens/category_screen.dart';
@@ -9,38 +7,26 @@ import 'package:category_album/screens/photo_classification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
-  //创建状态
   _HomeScreenState createState() => _HomeScreenState();
 }
-//状态类
+
 class _HomeScreenState extends State<HomeScreen> {
-  //创建一个类别列表
   List<Category> categories = [];
-  //声明了一个常量 _imagePicker，类型为 ImagePicker，用于选择图片
   final ImagePicker _imagePicker = ImagePicker();
 
-  //重写initState方法,初始化父类状态,加载类别
-  //重写此方法以执行初始化
-  //这些初始化依赖于该对象被插入到树中的位置（即 [context]）
-  //或用于配置此对象的部件（即 [widget]）
   @override
   void initState() {
     super.initState();
     _loadCategories();
   }
 
-  //加载类别(使用异步操作)
   Future<void> _loadCategories() async {
-    //调用数据库操作获取所有类别
     final loadedCategories = await DatabaseHelper.instance.getCategories();
     setState(() {
       categories = loadedCategories;
     });
-    //setState() 方法：通知 Flutter，有状态已经发生变化，需重新构建界面。
-//为什么使用 setState()？ 如果直接修改状态变量而不调用 setState()，界面不会更新。setState() 会触发界面的重绘。
   }
-//新增类别
-//啊啊啊懒得写注释了,现在我能看懂,过一周只有上帝能看懂了(逃)
+
   Future<void> _addCategory() async {
     final nameController = TextEditingController();
     return showDialog(
@@ -117,11 +103,15 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('分类相册'),
       ),
-      body: ListView.builder(
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+        ),
         itemCount: categories.length,
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(categories[index].name),
+          return GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
@@ -130,9 +120,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ).then((_) => _loadCategories());
             },
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () => _deleteCategory(categories[index]),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  color: Colors.grey[300],
+                  child: Center(
+                    child: Text(
+                      categories[index].name[0].toUpperCase(),
+                      style: TextStyle(fontSize: 40, color: Colors.white),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.black54,
+                  child: Center(
+                    child: Text(
+                      categories[index].name,
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.white),
+                    onPressed: () => _deleteCategory(categories[index]),
+                  ),
+                ),
+              ],
             ),
           );
         },
